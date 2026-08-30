@@ -19,5 +19,6 @@ spring:
 
 app:
   base-url: ${APP_BASE_URL:http://localhost:8080}
+  frontend-origins: ${FRONTEND_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
   geoip:
     database-path: classpath:geoip/GeoLite2-City.mmdb
