@@ -2,7 +2,6 @@ package com.eltondev.urlshortener.click;
 
 import com.eltondev.urlshortener.link.Link;
 import com.eltondev.urlshortener.link.LinkRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -34,37 +33,28 @@ public class ClickTrackingService {
     }
 
     @Async
-    public void recordClickAsync(String shortCode, HttpServletRequest request) {
+    public void recordClickAsync(String shortCode, String clientIp, String userAgentHeader, String referer) {
         linkRepository.findByShortCodeAndActiveTrue(shortCode).ifPresentOrElse(
-            link -> persistClick(link, request),
+            link -> persistClick(link, clientIp, userAgentHeader, referer),
             () -> log.warn("Skipped click recording: no active link for code {}", shortCode)
         );
     }
 
-    private void persistClick(Link link, HttpServletRequest request) {
-        String ip = extractClientIp(request);
-        var geo = geoIpService.lookup(ip);
-        var ua = userAgentParsingService.parse(request.getHeader("User-Agent"));
+    private void persistClick(Link link, String clientIp, String userAgentHeader, String referer) {
+        var geo = geoIpService.lookup(clientIp);
+        var ua = userAgentParsingService.parse(userAgentHeader);
 
         ClickEvent event = new ClickEvent(
             link,
-            hashIp(ip),
+            hashIp(clientIp),
             geo.country(),
             geo.city(),
             ua.deviceType(),
             ua.browser(),
             ua.os(),
-            request.getHeader("Referer")
+            referer
         );
         clickEventRepository.save(event);
-    }
-
-    private String extractClientIp(HttpServletRequest request) {
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && !forwardedFor.isBlank()) {
-            return forwardedFor.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
     }
 
     private String hashIp(String ip) {

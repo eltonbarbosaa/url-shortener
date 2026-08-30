@@ -31,13 +31,23 @@ public class StatsService {
         long total = clickEventRepository.countByLinkShortCode(shortCode);
 
         List<DailyClickCount> dailySeries = clickEventRepository.dailyCounts(shortCode).stream()
-            .map(row -> new DailyClickCount((LocalDate) row[0], (Long) row[1]))
+            .map(row -> new DailyClickCount(toLocalDate(row[0]), (Long) row[1]))
             .collect(Collectors.toList());
 
         Map<String, Long> byCountry = toMap(clickEventRepository.countryBreakdown(shortCode));
         Map<String, Long> byDevice = toMap(clickEventRepository.deviceBreakdown(shortCode));
 
         return new StatsResponse(shortCode, total, dailySeries, byCountry, byDevice);
+    }
+
+    private LocalDate toLocalDate(Object value) {
+        if (value instanceof LocalDate localDate) {
+            return localDate;
+        }
+        if (value instanceof java.sql.Date sqlDate) {
+            return sqlDate.toLocalDate();
+        }
+        throw new IllegalStateException("Unexpected date type: " + value.getClass());
     }
 
     private Map<String, Long> toMap(List<Object[]> rows) {

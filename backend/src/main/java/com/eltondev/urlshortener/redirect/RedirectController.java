@@ -28,10 +28,21 @@ public class RedirectController {
         String originalUrl = linkCacheService.resolve(shortCode)
             .orElseThrow(() -> new LinkNotFoundException(shortCode));
 
-        clickTrackingService.recordClickAsync(shortCode, request);
+        String clientIp = extractClientIp(request);
+        String userAgent = request.getHeader("User-Agent");
+        String referer = request.getHeader("Referer");
+        clickTrackingService.recordClickAsync(shortCode, clientIp, userAgent, referer);
 
         return ResponseEntity.status(HttpStatus.FOUND)
             .location(URI.create(originalUrl))
             .build();
+    }
+
+    private String extractClientIp(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 }
