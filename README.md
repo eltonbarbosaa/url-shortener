@@ -77,6 +77,11 @@ docker compose up --build
 > para IPv6 (`::1`) sem o encaminhamento de porta correspondente do Docker
 > Desktop. Costuma sumir após reiniciar o Docker Desktop (ou o Windows).
 
+## Deploy em produção
+
+Guia passo a passo pra colocar no ar gratuitamente no Railway:
+[`DEPLOY.md`](DEPLOY.md).
+
 Geolocalização real dos cliques é opcional: baixe o banco GeoLite2 City da
 MaxMind (gratuito, requer conta) e coloque em
 `backend/src/main/resources/geoip/GeoLite2-City.mmdb` — sem ele, o campo
