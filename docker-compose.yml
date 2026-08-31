@@ -32,7 +32,8 @@ services:
       DB_PASSWORD: urlshortener
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      APP_BASE_URL: http://localhost:8080
+      APP_BASE_URL: http://127.0.0.1:8080
+      FRONTEND_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,7 +44,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_BASE_URL: http://localhost:8080
+        VITE_API_BASE_URL: http://127.0.0.1:8080
     ports:
       - "5173:80"
     depends_on:
