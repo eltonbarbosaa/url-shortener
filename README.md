@@ -13,7 +13,10 @@ referrer) e exibe estatísticas agregadas em um dashboard.
 ![Redis](https://img.shields.io/badge/Redis-7-DC382D)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
 
-## Demo
+## Demo ao vivo
+
+🔗 **[frontend-production-62e9.up.railway.app](https://frontend-production-62e9.up.railway.app)**
+(API: [backend-production-7421.up.railway.app](https://backend-production-7421.up.railway.app))
 
 ![Tela de criação de link](docs/screenshots/create-result.png)
 ![Dashboard de estatísticas](docs/screenshots/stats-dashboard.png)
